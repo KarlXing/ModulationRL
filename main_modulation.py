@@ -90,8 +90,6 @@ def main():
         agent = algo.A2C_ACKTR(actor_critic, args.value_loss_coef,
                                args.entropy_coef, acktr=True)
     # print key arguments
-    print("modulation type ", args.modulation)
-    print("action action_selection: ", args.action_selection)
     print("dynamic_lr: ", args.dynamic_lr)
     beta = torch.ones(args.num_processes, 1).to(device)
     beta_device = torch.ones(args.num_processes, 1).to(device)
@@ -140,10 +138,8 @@ def main():
             with torch.no_grad():
                 masks_device.copy_(masks)
                 next_value = actor_critic.get_value(obs, recurrent_hidden_states, masks_device).detach()
-            if args.dynamic_lr == 1:
+            if args.dynamic_lr:
                 beta_device.copy_(beta)
-            elif args.dynamic_lr == 2:
-                beta_device.copy_(1.0/beta)
             # log information
             if args.log_evaluation:
                 writer.add_scalar('analysis/reward', reward[0], g_step)
