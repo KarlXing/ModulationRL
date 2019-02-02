@@ -1,5 +1,26 @@
 # Neuromodulation on Reinforcement Learning (A2C)
 
+## Requirements
+
+* Python 3 (it might work with Python 2, but I didn't test it)
+* [PyTorch](http://pytorch.org/)
+* [OpenAI baselines](https://github.com/openai/baselines)
+
+In order to install requirements, follow:
+
+```bash
+# PyTorch
+conda install pytorch torchvision -c soumith
+
+# Baselines for Atari preprocessing
+git clone https://github.com/openai/baselines.git
+cd baselines
+pip install -e .
+
+# Other requirements
+pip install -r requirements.txt
+```
+
 ## Parameters 
 * --env-name  
     name of environment
@@ -28,7 +49,7 @@
 python main_nomodulation.py --env-name "SpaceInvadersNoFrameskip-v0"  --num-frames 100000000  --carl-wrapper --activation 1 --log-evaluation 
 
 2. no modulation, epsilon greedy  
-python main_nomodulation.py --env-name "SpaceInvadersNoFrameskip-v0"  --num-frames 100000000  --carl-wrapper --activation 1 --log-evaluation  --epsilon-start 0.9  --epsilon-end 0.05, --epsilon-decay 5000
+python main_epsilon.py --env-name "SpaceInvadersNoFrameskip-v0"  --num-frames 100000000  --carl-wrapper --activation 1 --log-evaluation  --epsilon-start 0.9  --epsilon-end 0.05, --epsilon-decay 5000
 
 3. modulation (modulate temperature in action selection only)  
     python main_modulation.py --env-name "SpaceInvadersNoFrameskip-v0"  --num-frames 100000000  --carl-wrapper --activation 1 --log-evaluation
