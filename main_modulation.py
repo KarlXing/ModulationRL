@@ -71,7 +71,7 @@ def main():
     envs = make_vec_envs(args.env_name, args.seed, args.num_processes,
                         args.gamma, args.log_dir, args.add_timestep, device, False, 4, args.carl_wrapper)
 
-    actor_critic = Policy(envs.observation_space.shape, envs.action_space, args.activation, args.modulation, args.sync,
+    actor_critic = Policy(envs.observation_space.shape, envs.action_space, args.activation,
         base_kwargs={'recurrent': args.recurrent_policy})
     actor_critic.to(device)
 
@@ -127,7 +127,7 @@ def main():
                         rollouts.obs[step],
                         rollouts.recurrent_hidden_states[step],
                         rollouts.masks[step],
-                        mean_entropy, args.min_beta, args.max_beta, current_max_beta, device, args.flatness, args.action_selection, beta)
+                        mean_entropy, args.min_beta, args.max_beta, current_max_beta, device, args.flatness, beta)
             dist_entropy = dist_entropy.cpu().unsqueeze(1)
             mean_entropy = 0.999*mean_entropy + dist_entropy.mean()*0.001
             # Obser reward and next obs

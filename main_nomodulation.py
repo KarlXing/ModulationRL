@@ -72,7 +72,7 @@ def main():
     envs = make_vec_envs(args.env_name, args.seed, args.num_processes,
                         args.gamma, args.log_dir, args.add_timestep, device, False, 4, args.carl_wrapper)
 
-    actor_critic = Policy(envs.observation_space.shape, envs.action_space, args.activation, args.modulation, args.sync,
+    actor_critic = Policy(envs.observation_space.shape, envs.action_space, args.activation,
         base_kwargs={'recurrent': args.recurrent_policy})
     actor_critic.to(device)
 
@@ -104,7 +104,6 @@ def main():
     rollouts.to(device)
 
     episode_rewards = deque(maxlen=10)
-    start = time.time()
     g_step = 0
     for j in range(num_updates):
         for step in range(args.num_steps):
@@ -114,8 +113,7 @@ def main():
                 value, action, action_log_prob, recurrent_hidden_states, ori_dist_entropy = actor_critic.act(
                         rollouts.obs[step],
                         rollouts.recurrent_hidden_states[step],
-                        rollouts.masks[step],
-                        deterministic = True)
+                        rollouts.masks[step])
             ori_dist_entropy = ori_dist_entropy.cpu().unsqueeze(1)
             obs, reward, done, infos = envs.step(action)
             obs = obs/255
@@ -126,7 +124,6 @@ def main():
             if args.log_evaluation:
                 writer.add_scalar('analysis/reward', reward[0], g_step)
                 writer.add_scalar('analysis/entropy', ori_dist_entropy[0].item(), g_step)
-                writer.add_scalar('analysis/eps', eps_threshold, g_step)
                 if done[0]:
                     writer.add_scalar('analysis/done', 1, g_step)
 

@@ -17,7 +17,7 @@ from arguments import get_args
 from envs import make_vec_envs
 from model_nomodulation import Policy
 from storage import RolloutStorage
-from utils import get_vec_normalize, update_mode_entropy, neuro_activity, obs_representation
+from utils import get_vec_normalize
 from visualize import visdom_plot
 from tensorboardX import SummaryWriter
 
@@ -63,9 +63,9 @@ except OSError:
 ######################################
 # main
 # initialize epsilon decay parameters
-EPS_START = 0.9
-EPS_END = 0.05
-EPS_DECAY = 50000
+EPS_START = args.eps_start
+EPS_END = args.eps_end
+EPS_DECAY = args.eps_decay
 
 def main():
     writer = SummaryWriter()
@@ -76,7 +76,7 @@ def main():
     envs = make_vec_envs(args.env_name, args.seed, args.num_processes,
                         args.gamma, args.log_dir, args.add_timestep, device, False, 4, args.carl_wrapper)
 
-    actor_critic = Policy(envs.observation_space.shape, envs.action_space, args.activation, args.modulation, args.sync,
+    actor_critic = Policy(envs.observation_space.shape, envs.action_space, args.activation,
         base_kwargs={'recurrent': args.recurrent_policy})
     actor_critic.to(device)
 
@@ -108,7 +108,6 @@ def main():
     rollouts.to(device)
 
     episode_rewards = deque(maxlen=10)
-    start = time.time()
     g_step = 0
     for j in range(num_updates):
         for step in range(args.num_steps):

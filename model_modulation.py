@@ -12,14 +12,13 @@ class Flatten(nn.Module):
 
 
 class Policy(nn.Module):
-    def __init__(self, obs_shape, action_space, activation, modulation, sync, base_kwargs=None):
+    def __init__(self, obs_shape, action_space, activation, base_kwargs=None):
         super(Policy, self).__init__()
         if base_kwargs is None:
             base_kwargs = {}
 
         if len(obs_shape) == 3:
             self.base = CNNBase(obs_shape[0], activation=activation, **base_kwargs)
-            #print("Use no modulation in model")
         elif len(obs_shape) == 1:
             self.base = MLPBase(obs_shape[0], **base_kwargs)
             print("Use MLP model")
@@ -47,13 +46,12 @@ class Policy(nn.Module):
     def forward(self, inputs, rnn_hxs, masks):
         raise NotImplementedError
 
-    def act(self, inputs, rnn_hxs, masks, mean_entropy, min_beta, max_beta, current_beta_range, device, flatness, action_selection, beta, deterministic=False):
+    def act(self, inputs, rnn_hxs, masks, mean_entropy, min_beta, max_beta, current_beta_range, device, flatness, beta, deterministic=False):
         value, actor_features, rnn_hxs, x = self.base(inputs, rnn_hxs, masks)
         dist = self.dist(actor_features)
         dist_entropy = dist.entropy()
         beta = get_beta(device, dist_entropy, mean_entropy, min_beta, max_beta, current_beta_range, flatness, beta)
-        if action_selection:
-            dist = self.dist(actor_features*beta)
+        dist = self.dist(actor_features*beta)
 
         if deterministic:
             action = dist.mode()

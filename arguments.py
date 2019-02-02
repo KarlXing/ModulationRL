@@ -67,50 +67,28 @@ def get_args():
                         help='activation function for f1 layer, default 0 : relu, 1 : tanh')
     parser.add_argument('--carl-wrapper', action='store_true',default=False,
                         help='use deepmind wrapper or carl wrapper')
-    parser.add_argument('--modulation', type=int, default=0,
-                        help='whether use modulation, 0: no modulation; 1: input modulation; 2: f1 modulation')
-    parser.add_argument('--tanh-f1-tonic', type=float, default=0.5,
-                        help='tonic g value for tanh fucntion')
-    parser.add_argument('--tanh-f1-phasic', type=float, default=2.0,
-                        help='phasic g value for tanh function')
-    parser.add_argument('--neuro-input-tonic', type=float, default=100,
-                        help='tonic g value for input')
-    parser.add_argument('--neuro-input-phasic', type=float, default=20,
-                        help='phasic g value for input')
-    parser.add_argument('--relu-tonic', type=float, default=0.5,
-                        help='tonic g value for relu activation')
-    parser.add_argument('--relu-phasic', type=float, default=2.0,
-                        help='phasic g value for relu activation')
     parser.add_argument('--log-evaluation', action='store_true', default = False,
                         help='whether log evaluations for later analysis of choosing the threshold')
-    parser.add_argument('--phasic-threshold', type=float, default=0.1,
-                        help='threshold to switch between phasic and tonic modes')
-    parser.add_argument('--input-neuro', action='store_true', default=False,
-                        help='whether use norm or neuro activity form of observation')
-    parser.add_argument('--sync', action='store_true', default=False,
-                        help='only valid in f1 modulation')
-    parser.add_argument('--num-eval-processes', type=int, default=10,
-                        help='how many processes to use in eval model')
     parser.add_argument('--saved-model', default=None,
                         help='the path of the saved model')
     parser.add_argument('--stats-path', default=None,
                         help='the path to the evaluations results')
     parser.add_argument('--flatness', type=float, default=5.0,
                         help='the sigmoid curve parameter for flatness')
-    parser.add_argument('--natural-value', action='store_true', default=False,
-                        help='remove abstract of evaluations')
-    parser.add_argument('--sigmoid', action='store_true', default=False,
-                        help='use sigmoid for g update')
     parser.add_argument('--fixed-beta', action='store_true', default=False,
                         help='use fixed beta, otherwise use changing beta in default')
     parser.add_argument('--min-beta', type=float, default=1.0,
                         help='minimum beta in modualtion')
     parser.add_argument('--max-beta', type=float, default=1.0,
                         help='maximum beta in modualtion')
-    parser.add_argument('--dynamic-lr', type=int, default=0,
-                        help='0: same learning rate, 1: high g, high lr, 2: high g, low lr')
-    parser.add_argument('--action-selection', action='store_true', default=False,
-                        help='whether use signal to affect action selection, no in default')
+    parser.add_argument('--dynamic-lr', action='store_true', default=False,
+                        help='false: modualte beta in action selection only')
+    parser.add_argument('--eps-start', type=float, default=0.9,
+                        help='epsilon greedy parameter: initial value')
+    parser.add_argument('--eps-end', type=float, default=0.05,
+                        help='epsilon greedy parameter: end value')
+    parser.add_argument('--eps-decay', type=int, default=50000,
+                        help='epsilon greedy parameter: decay')
 
     args = parser.parse_args()
 
